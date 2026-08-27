@@ -11,7 +11,9 @@ export async function GET(req: Request) {
   const q = searchParams.get("q") || "";
   const type = searchParams.get("type") || "";
   const filter: Record<string, unknown> = {};
-  if (type && ["car", "bike", "auto"].includes(type)) filter.type = type;
+  if (type && ["car", "bike", "rickshaw", "auto"].includes(type)) {
+    filter.type = type === "rickshaw" ? { $in: ["rickshaw", "auto"] } : type;
+  }
   if (q) {
     filter.$or = [
       { number: { $regex: q, $options: "i" } },
@@ -28,12 +30,12 @@ export async function POST(req: Request) {
   if (error) return error;
   const body = await req.json();
   if (!body.flatId || !body.type || !body.number) {
-    return NextResponse.json({ error: "ફ્લેટ, પ્રકાર અને નંબર જરૂરી છે" }, { status: 400 });
+    return NextResponse.json({ error: "પ્લોટ, પ્રકાર અને નંબર જરૂરી છે" }, { status: 400 });
   }
   await dbConnect();
   const vehicle = await Vehicle.create({
     flatId: body.flatId,
-    type: body.type,
+    type: body.type === "auto" ? "rickshaw" : body.type,
     number: body.number,
     occupant: body.occupant === "renter" ? "renter" : "owner",
     ownerName: body.ownerName || "",

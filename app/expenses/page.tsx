@@ -79,6 +79,7 @@ export default function ExpensesPage() {
     <>
       <Header title="ખર્ચ" />
       <Screen>
+        <p className="text-sm text-slate-500 font-guj -mt-1 mb-2">કલેક્શનમાંથી થયેલો ખર્ચ (બોરિંગ, લાઈટ, અન્ય)</p>
         <div className="flex gap-2 mb-3">
           <button className="bg-navy text-white rounded-xl px-3 py-2 text-sm" onClick={() => { setEdit(null); setForm({ ...form, title: "", amount: "", bills: [] }); setOpen(true); }}>
             + ખર્ચ

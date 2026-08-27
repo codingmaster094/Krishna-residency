@@ -6,8 +6,6 @@ import { TOTAL_GALAS } from "@/lib/constants";
 import { isValidPhone } from "@/lib/format";
 
 export async function GET(req: Request) {
-  const { error } = await requireAdmin();
-  if (error) return error;
   await dbConnect();
   const { searchParams } = new URL(req.url);
   const q = (searchParams.get("q") || "").trim();

@@ -23,16 +23,23 @@ interface Cache {
 const g = globalThis as typeof globalThis & { mongooseCache?: Cache };
 if (!g.mongooseCache) g.mongooseCache = { conn: null, promise: null };
 
-async function migrateAdminsCollection() {
+async function unifyToUsersOnly() {
   const db = mongoose.connection.db;
   if (!db) return;
   const users = db.collection("users");
+  const names = await db.listCollections({ name: "admins" }).toArray();
+  if (!names.length) return;
   const admins = db.collection("admins");
-  const [userCount, adminCount] = await Promise.all([users.countDocuments(), admins.countDocuments()]);
-  if (adminCount > 0 && userCount === 0) {
-    const docs = await admins.find().toArray();
-    if (docs.length) await users.insertMany(docs);
+  const old = await admins.find().toArray();
+  for (const doc of old) {
+    const { _id, ...rest } = doc;
+    await users.updateOne(
+      { email: rest.email },
+      { $setOnInsert: { _id, ...rest } },
+      { upsert: true }
+    );
   }
+  await admins.drop().catch(() => undefined);
 }
 
 export async function dbConnect() {
@@ -51,7 +58,7 @@ export async function dbConnect() {
 
   try {
     cache.conn = await cache.promise;
-    await migrateAdminsCollection();
+    await unifyToUsersOnly();
     return cache.conn;
   } catch (err) {
     cache.promise = null;

@@ -1,6 +1,6 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, type Model } from "mongoose";
 
-const AdminSchema = new Schema(
+const UserSchema = new Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true, lowercase: true },
@@ -11,7 +11,14 @@ const AdminSchema = new Schema(
   { timestamps: true, collection: "users" }
 );
 
-if (mongoose.models.Admin) delete mongoose.models.Admin;
-if (mongoose.models.User) delete mongoose.models.User;
+export type UserDoc = {
+  _id: mongoose.Types.ObjectId;
+  name: string;
+  email: string;
+  mobile: string;
+  passwordHash: string;
+  role: "admin";
+};
 
-export const Admin = mongoose.model("User", AdminSchema, "users");
+export const Admin: Model<UserDoc> =
+  (mongoose.models.User as Model<UserDoc>) || mongoose.model<UserDoc>("User", UserSchema, "users");

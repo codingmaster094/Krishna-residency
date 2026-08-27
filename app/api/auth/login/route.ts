@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { dbConnect, mongoUserMessage } from "@/lib/db";
-import { Admin } from "@/models/Admin";
 import { setAuthCookie, signAdminToken } from "@/lib/auth";
-import { digitsOnly } from "@/lib/format";
 import { ensureSocietyData } from "@/lib/ensure-society";
+import { findLoginUser } from "@/lib/find-user";
 
 export async function POST(req: Request) {
   try {
@@ -16,10 +15,7 @@ export async function POST(req: Request) {
     }
 
     await dbConnect();
-    const mobile = digitsOnly(identifier);
-    const admin = await Admin.findOne({
-      $or: [{ email: identifier }, ...(mobile ? [{ mobile }] : [])],
-    });
+    const admin = await findLoginUser(identifier);
     if (!admin) return NextResponse.json({ error: "ખોટી માહિતી" }, { status: 401 });
 
     const ok = await bcrypt.compare(password, admin.passwordHash);

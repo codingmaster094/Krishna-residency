@@ -70,8 +70,10 @@ export function Confirm({
   );
 }
 
-export function Screen({ children }: { children: ReactNode }) {
-  return <main className="p-3 sm:p-4 max-w-lg mx-auto space-y-4 pb-8 w-full min-w-0">{children}</main>;
+export function Screen({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return (
+    <main className={`p-3 sm:p-4 max-w-lg mx-auto space-y-4 pb-8 w-full min-w-0 ${className}`}>{children}</main>
+  );
 }
 
 export function useFormSubmit(fn: (e: FormEvent) => Promise<void>) {

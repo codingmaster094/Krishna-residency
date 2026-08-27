@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AUTH_COOKIE } from "./lib/constants";
 
-const PUBLIC = ["/login", "/manifest.webmanifest", "/icons"];
-
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   if (
+    pathname === "/" ||
+    pathname === "/plots" ||
+    pathname === "/map" ||
+    pathname === "/login" ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api/") ||
-    PUBLIC.some((p) => pathname === p || pathname.startsWith(p + "/")) ||
+    pathname.startsWith("/manifest") ||
     pathname.includes(".")
   ) {
     return NextResponse.next();

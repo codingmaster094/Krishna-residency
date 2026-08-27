@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth";
 import { dbConnect } from "@/lib/db";
 import { Collection } from "@/models/Collection";
 import { Expense } from "@/models/Expense";
@@ -12,8 +11,6 @@ import { monthBounds } from "@/lib/format";
 import { ensureSocietyData } from "@/lib/ensure-society";
 
 export async function GET(req: Request) {
-  const { error } = await requireAdmin();
-  if (error) return error;
   await dbConnect();
   await ensureSocietyData();
 
@@ -65,7 +62,7 @@ export async function GET(req: Request) {
       vehicles: {
         car: vehicles.filter((v) => v.type === "car").length,
         bike: vehicles.filter((v) => v.type === "bike").length,
-        auto: vehicles.filter((v) => v.type === "auto").length,
+        rickshaw: vehicles.filter((v) => v.type === "rickshaw" || v.type === "auto").length,
       },
     },
     monthMaintenance: {

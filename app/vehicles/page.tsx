@@ -17,7 +17,7 @@ type V = {
   flatId?: Flat;
 };
 
-const tlab: Record<string, string> = { car: "કાર", bike: "બાઈક/સ્કૂટર", auto: "ઓટો" };
+const tlab: Record<string, string> = { car: "કાર", bike: "બાઈક", rickshaw: "રિક્ષા", auto: "રિક્ષા" };
 
 export default function VehiclesPage() {
   const [items, setItems] = useState<V[]>([]);
@@ -62,13 +62,14 @@ export default function VehiclesPage() {
     <>
       <Header title="વાહન" />
       <Screen>
+        <p className="text-sm text-slate-500 font-guj -mt-1">પ્લોટ હોલ્ડર / રેન્ટર · કાર · રિક્ષા · બાઈક</p>
         <div className="flex gap-2 mb-3">
           <input className={inputCls} placeholder="શોધો" value={q} onChange={(e) => setQ(e.target.value)} />
           <select className={inputCls} value={type} onChange={(e) => setType(e.target.value)}>
             <option value="">બધા</option>
             <option value="car">કાર</option>
+            <option value="rickshaw">રિક્ષા</option>
             <option value="bike">બાઈક</option>
-            <option value="auto">ઓટો</option>
           </select>
           <button className="bg-navy text-white rounded-xl px-3 text-sm" onClick={() => { setEdit(null); setOpen(true); }}>
             +
@@ -80,7 +81,9 @@ export default function VehiclesPage() {
               <p className="font-semibold">
                 {tlab[v.type]} · {v.number}
               </p>
-              <p className="font-guj text-sm">ઘર નંબર {(v.flatId as Flat)?.number} · {v.ownerName}</p>
+              <p className="font-guj text-sm">
+                પ્લોટ {(v.flatId as Flat)?.number} · {v.occupant === "renter" ? "રેન્ટર" : "હોલ્ડર"} · {v.ownerName}
+              </p>
               <p className="text-xs">{v.stickerIssued ? `સ્ટિકર ${v.stickerNumber}` : "સ્ટિકર નથી"}</p>
               <div className="flex gap-3 text-xs mt-2">
                 <button
@@ -109,30 +112,30 @@ export default function VehiclesPage() {
         </div>
       </Screen>
       <Modal open={open} title="વાહન" onClose={() => setOpen(false)}>
-        <Field label="ઘર નંબર">
+        <Field label="પ્લોટ (1–44)">
           <select className={inputCls} value={form.flatId} onChange={(e) => setForm({ ...form, flatId: e.target.value })}>
             <option value="">પસંદ</option>
             {flats.map((f) => (
               <option key={f._id} value={f._id}>
-                ઘર નંબર {f.number}
+                પ્લોટ {f.number} {f.ownerName ? `· ${f.ownerName}` : ""}
               </option>
             ))}
           </select>
         </Field>
         <Field label="પ્રકાર">
-          <select className={inputCls} value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
+          <select className={inputCls} value={form.type === "auto" ? "rickshaw" : form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
             <option value="car">કાર</option>
-            <option value="bike">બાઈક/સ્કૂટર</option>
-            <option value="auto">ઓટો</option>
+            <option value="rickshaw">રિક્ષા</option>
+            <option value="bike">બાઈક</option>
           </select>
         </Field>
         <Field label="નંબર">
           <input className={inputCls} value={form.number} onChange={(e) => setForm({ ...form, number: e.target.value })} />
         </Field>
-        <Field label="માલિક/ભાડૂત">
+        <Field label="પ્લોટ હોલ્ડર / રેન્ટર">
           <select className={inputCls} value={form.occupant} onChange={(e) => setForm({ ...form, occupant: e.target.value })}>
-            <option value="owner">માલિક</option>
-            <option value="renter">ભાડૂત</option>
+            <option value="owner">પ્લોટ હોલ્ડર</option>
+            <option value="renter">રેન્ટર</option>
           </select>
         </Field>
         <Field label="નામ (ગુજરાતી)">

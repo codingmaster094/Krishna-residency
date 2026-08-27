@@ -2,9 +2,8 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { dbConnect, mongoUserMessage } from "@/lib/db";
 import { Admin } from "@/models/Admin";
-import { setAuthCookie, signAdminToken } from "@/lib/auth";
+import { getAdminFromCookies } from "@/lib/auth";
 import { digitsOnly, isValidPhone } from "@/lib/format";
-import { ensureSocietyData } from "@/lib/ensure-society";
 
 export async function POST(req: Request) {
   try {
@@ -28,9 +27,15 @@ export async function POST(req: Request) {
     }
 
     await dbConnect();
+    const count = await Admin.countDocuments();
+    const session = await getAdminFromCookies();
+    if (count > 0 && !session) {
+      return NextResponse.json({ error: "નવો એડમિન બનાવવા પહેલાં Admin લૉગિન કરો" }, { status: 401 });
+    }
+
     const exists = await Admin.findOne({ $or: [{ email }, { mobile }] });
     if (exists) {
-      return NextResponse.json({ error: "આ ઈમેઈલ અથવા મોબાઈલ પહેલેથી છે — લૉગિન કરો" }, { status: 409 });
+      return NextResponse.json({ error: "આ ઈમેઈલ અથવા મોબાઈલ પહેલેથી છે" }, { status: 409 });
     }
 
     const admin = await Admin.create({
@@ -41,30 +46,24 @@ export async function POST(req: Request) {
       role: "admin",
     });
 
-    try {
-      await ensureSocietyData();
-    } catch (e) {
-      console.error("ensureSocietyData", e);
-    }
-
-    const token = await signAdminToken({
-      sub: String(admin._id),
-      role: "admin",
-      email: admin.email,
-      name: admin.name,
-    });
-    const res = NextResponse.json({
+    return NextResponse.json({
       ok: true,
       admin: { id: admin._id, name: admin.name, email: admin.email, mobile: admin.mobile },
     });
-    setAuthCookie(res, token);
-    return res;
   } catch (err) {
     console.error("register", err);
     const code = (err as { code?: number }).code;
     if (code === 11000) {
-      return NextResponse.json({ error: "આ ઈમેઈલ અથવા મોબાઈલ પહેલેથી છે — લૉગિન કરો" }, { status: 409 });
+      return NextResponse.json({ error: "આ ઈમેઈલ અથવા મોબાઈલ પહેલેથી છે" }, { status: 409 });
     }
     return NextResponse.json({ error: mongoUserMessage(err) }, { status: 500 });
   }
+}
+
+export async function GET() {
+  const session = await getAdminFromCookies();
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  await dbConnect();
+  const users = await Admin.find().select("name email mobile role createdAt").sort({ createdAt: 1 }).lean();
+  return NextResponse.json({ users });
 }

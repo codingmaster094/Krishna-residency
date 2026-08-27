@@ -77,6 +77,19 @@ export default function CollectionsPage() {
     <>
       <Header title="કલેક્શન" />
       <Screen>
+        <p className="text-sm text-slate-500 font-guj -mt-1">માસિક મેન્ટેનન્સ · ઇવેન્ટ · ઇમરજન્સી</p>
+        <div className="flex flex-wrap gap-2">
+          {purposes.map((p) => (
+            <button
+              key={p._id}
+              type="button"
+              onClick={() => setPurposeId(p._id)}
+              className={`rounded-full px-3 py-1.5 text-xs font-guj ${purposeId === p._id ? "bg-navy text-gold" : "bg-white"}`}
+            >
+              {p.title}
+            </button>
+          ))}
+        </div>
         <div className="flex flex-wrap gap-2">
           <select className={`${inputCls} min-w-0 flex-1`} value={purposeId} onChange={(e) => setPurposeId(e.target.value)}>
             {purposes.map((p) => (
@@ -132,16 +145,17 @@ export default function CollectionsPage() {
         </div>
 
         {paidFilter !== "paid" &&
+          (purpose?.amountPerFlat ?? 0) > 0 &&
           pendingFlats.map((f) => (
             <article key={f._id} className="card-surface p-3 flex justify-between items-center">
               <div>
-                <p className="font-semibold">ઘર નંબર {f.number}</p>
+                <p className="font-semibold">પ્લોટ {f.number}</p>
                 <p className="text-xs text-red-600">બાકી {formatInr(purpose?.amountPerFlat || MONTHLY_MAINTENANCE)}</p>
               </div>
               {f.ownerMobile && (
                 <a
                   className="text-xs bg-green-600 text-white rounded-full px-3 py-1"
-                  href={waUrl(f.ownerMobile, `નમસ્તે,\nKrishna Residency ઘર નંબર ${f.number} — મેન્ટેનન્સ ₹${purpose?.amountPerFlat} બાકી છે.`)}
+                  href={waUrl(f.ownerMobile, `નમસ્તે,\nKrishna Residency પ્લોટ ${f.number} — મેન્ટેનન્સ ₹${purpose?.amountPerFlat} બાકી છે.`)}
                   target="_blank"
                 >
                   WhatsApp
@@ -155,7 +169,7 @@ export default function CollectionsPage() {
             <article key={c._id} className="card-surface p-3">
               <div className="flex justify-between">
                 <p className="font-semibold">
-                  ઘર નંબર {(c.flatId as Flat)?.number ?? ""} · {formatInr(c.amount)}
+                  પ્લોટ {(c.flatId as Flat)?.number ?? ""} · {formatInr(c.amount)}
                 </p>
                 <span className="text-xs">{c.mode}</span>
               </div>
@@ -185,12 +199,12 @@ export default function CollectionsPage() {
       </Screen>
 
       <Modal open={openC} title="કલેક્શન" onClose={() => setOpenC(false)}>
-        <Field label="ઘર નંબર (1–44)">
+        <Field label="પ્લોટ (1–44)">
           <select className={inputCls} value={cForm.flatId} onChange={(e) => setCForm({ ...cForm, flatId: e.target.value })}>
             <option value="">પસંદ કરો</option>
             {flats.map((f) => (
               <option key={f._id} value={f._id}>
-                ઘર નંબર {f.number}
+                પ્લોટ {f.number}
               </option>
             ))}
           </select>

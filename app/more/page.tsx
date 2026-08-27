@@ -4,14 +4,18 @@ import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Screen } from "@/components/ui";
 import { InstallAppButton } from "@/components/PwaInstall";
+import { useAuth } from "@/components/AuthProvider";
 
 const cards = [
+  { href: "/map", title: "લેઆઉટ", sub: "3D સોસાયટી મેપ 1–44", icon: "🗺️", tone: "from-emerald-50 to-white" },
+  { href: "/vehicles", title: "વાહન", sub: "કાર · રિક્ષા · બાઈક", icon: "🚘", tone: "from-sky-50 to-white" },
   { href: "/notices", title: "નોટિસ", sub: "જાહેરાત બોર્ડ", icon: "✦", tone: "from-amber-50 to-white" },
   { href: "/emergency", title: "ઇમરજન્સી નંબર", sub: "પોલીસ, ફાયર, હોસ્પિટલ", icon: "☎", tone: "from-red-50 to-white" },
-  { href: "/events", title: "ઇવેન્ટ", sub: "સોસાયટી કાર્યક્રમ", icon: "◎", tone: "from-sky-50 to-white" },
+  { href: "/events", title: "ઇવેન્ટ", sub: "સોસાયટી કાર્યક્રમ", icon: "◎", tone: "from-indigo-50 to-white" },
 ];
 
 export default function MorePage() {
+  const { admin } = useAuth();
   return (
     <>
       <Header title="વધુ" />
@@ -26,6 +30,15 @@ export default function MorePage() {
               </div>
             </Link>
           ))}
+        {admin && (
+          <Link href="/admins" className="card-surface p-4 min-h-[100px] bg-gradient-to-br from-navy to-[#1a4a73] text-white flex flex-col justify-between col-span-2">
+            <span>👤</span>
+            <div>
+              <h2 className="font-guj font-bold">નવો એડમિન</h2>
+              <p className="text-xs text-white/70 mt-1">ફક્ત લૉગિન એડમિન નવું એકાઉન્ટ બનાવી શકે</p>
+            </div>
+          </Link>
+        )}
         </div>
         <div className="card-surface p-4 bg-gradient-to-br from-navy to-[#1a4a73] text-white">
           <p className="font-guj font-bold">મોબાઈલ પર એપ ઇન્સ્ટોલ</p>
