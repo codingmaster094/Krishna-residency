@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-inter: Inter, system-ui, sans-serif;
+  --font-gujarati: "Noto Sans Gujarati", sans-serif;
+}
+
+body {
+  @apply text-navy antialiased;
+  background:
+    radial-gradient(1200px 500px at 10% -10%, #fde68a33, transparent 50%),
+    radial-gradient(900px 400px at 110% 0%, #93c5fd33, transparent 45%),
+    #f4efe6;
+}
+
+input, select, textarea, button {
+  font-family: inherit;
+}
+
+.card-surface {
+  @apply bg-white/90 backdrop-blur rounded-3xl border border-white shadow-[0_12px_40px_rgba(15,39,68,0.08)];
+}
+
+.btn-primary {
+  @apply w-full rounded-2xl py-3 font-guj font-semibold text-white bg-gradient-to-r from-[#0f2744] via-[#16375f] to-[#1a4a73] shadow-lg shadow-navy/25 active:scale-[0.99] disabled:opacity-60;
+}
+
+.chip {
+  @apply inline-flex items-center rounded-full px-3 py-1 text-[11px] font-medium;
+}
+
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+@media (max-width: 380px) {
+  .card-surface {
+    @apply rounded-2xl;
+  }
+}
