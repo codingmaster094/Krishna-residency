@@ -12,11 +12,13 @@ export const metadata: Metadata = {
   title: "Krishna Residency Maintenance Manage System",
   description: "Krishna Residency society operations",
   manifest: "/manifest.webmanifest",
-  appleWebApp: { capable: true, title: "KR Society", statusBarStyle: "black-translucent" },
+  appleWebApp: { capable: true, title: "Krishna Residency 3", statusBarStyle: "black-translucent" },
   icons: {
     icon: [
-      { url: "/icon-192.png", sizes: "192x192" },
-      { url: "/icon-512.png", sizes: "512x512" },
+      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+      { url: "/logo.jpg", type: "image/jpeg" },
     ],
     apple: "/apple-touch-icon.png",
   },

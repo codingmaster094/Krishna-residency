@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Header } from "@/components/Header";
 import { Field, Modal, Screen, inputCls } from "@/components/ui";
 import { api } from "@/lib/api";
@@ -165,6 +165,47 @@ function PlotStrip({
   );
 }
 
+function FitMap({ children }: { children: ReactNode }) {
+  const outer = useRef<HTMLDivElement>(null);
+  const inner = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  const [height, setHeight] = useState<number>();
+
+  useLayoutEffect(() => {
+    const o = outer.current;
+    const i = inner.current;
+    if (!o || !i) return;
+
+    const apply = () => {
+      const naturalW = i.offsetWidth;
+      const naturalH = i.offsetHeight;
+      if (!naturalW) return;
+      const next = o.clientWidth / naturalW;
+      setScale(next);
+      setHeight(Math.ceil(naturalH * next));
+    };
+
+    apply();
+    const ro = new ResizeObserver(apply);
+    ro.observe(o);
+    ro.observe(i);
+    return () => ro.disconnect();
+  }, []);
+
+  return (
+    <div ref={outer} className="iso-fit">
+      <div
+        ref={inner}
+        className="iso-stage"
+        style={{ transform: `scale(${scale})`, transformOrigin: "top left" }}
+      >
+        {children}
+      </div>
+      <div aria-hidden className="iso-fit-spacer" style={{ height }} />
+    </div>
+  );
+}
+
 function SocietyMap({
   byNum,
   highlight,
@@ -272,7 +313,7 @@ export default function SocietyLayoutPage() {
   return (
     <>
       <Header title="લેઆઉટ" />
-      <Screen className="!max-w-none">
+      <Screen className="!max-w-none !px-2 sm:!px-4">
         <div className="card-surface p-3 space-y-2">
           <input
             className={inputCls}
@@ -316,9 +357,9 @@ export default function SocietyLayoutPage() {
           <span>🛝 Children Garden</span>
         </div>
 
-        <div className="iso-stage">
+        <FitMap>
           <SocietyMap byNum={byNum} highlight={highlight} filter={filter} onClick={openPlot} />
-        </div>
+        </FitMap>
       </Screen>
 
       <Modal open={!!picked} title={picked ? `Plot ${picked.number}` : ""} onClose={() => setPicked(null)}>

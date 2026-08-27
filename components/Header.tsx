@@ -19,9 +19,11 @@ export function Header({ title }: { title: string }) {
     <header className="sticky top-0 z-30 px-3 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 bg-gradient-to-br from-[#0a1b30] via-[#0f2744] to-[#1a3a5c] text-white shadow-lg">
       <div className="max-w-lg mx-auto flex items-center justify-between gap-2">
         <Link href="/" className="flex items-center gap-2 min-w-0">
-          <div className="h-10 w-10 shrink-0 rounded-2xl bg-gold/20 border border-gold/40 flex items-center justify-center font-bold text-gold text-sm">
-            KR
-          </div>
+          <img
+            src="/logo.jpg"
+            alt="Krishna Residency 3"
+            className="h-11 w-11 shrink-0 rounded-2xl object-cover border border-gold/40 shadow-md bg-navy"
+          />
           <div className="min-w-0">
             <p className="text-[9px] text-gold tracking-[0.12em] font-medium truncate">MAINTENANCE MANAGE SYSTEM</p>
             <h1 className="font-guj text-base sm:text-lg font-bold leading-tight truncate">{title}</h1>

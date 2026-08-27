@@ -44,9 +44,11 @@ function AuthForm() {
         <Link href="/" className="text-xs text-navy/60 font-guj">
           ← ડેશબોર્ડ
         </Link>
-        <div className="h-14 w-14 rounded-2xl bg-navy text-gold font-bold text-xl flex items-center justify-center my-4 shadow-lg">
-          KR
-        </div>
+        <img
+          src="/logo.jpg"
+          alt="Krishna Residency 3"
+          className="h-16 w-16 rounded-2xl object-cover my-4 shadow-lg border border-gold/30 bg-navy"
+        />
         <p className="text-gold text-[11px] tracking-[0.22em] font-semibold">{SOCIETY_NAME.toUpperCase()}</p>
         <h1 className="font-guj text-2xl font-bold text-navy mt-1">Admin લૉગિન</h1>
         <p className="text-sm text-slate-500 mt-1 mb-5">{APP_NAME}</p>
