@@ -36,27 +36,32 @@ html, body {
   overflow-x: hidden;
 }
 
-/* Flat 2D society map — mobile-first, no 3D */
+/* Flat society map: vertical on mobile, horizontal on desktop */
 .map-stage {
   width: 100%;
   background: #eef7e4;
   border-radius: 1.25rem;
   border: 1px solid #d9e8c8;
-  padding: 0.55rem;
+  padding: 0.65rem;
   overflow: hidden;
 }
 .map-stage.compact {
-  padding: 0.4rem;
+  padding: 0.45rem;
 }
 .map-grid {
   display: grid;
-  grid-template-columns: minmax(2.6rem, 0.55fr) minmax(0, 1.65fr) minmax(2.6rem, 0.55fr) minmax(0, 1fr);
-  grid-template-areas:
-    "garden left1 mid1 right1"
-    "garden left2 mid2 right2";
-  gap: 0.3rem;
   width: 100%;
-  align-items: stretch;
+  gap: 0.45rem;
+  /* Mobile: stacked vertical */
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "mid1"
+    "left1"
+    "right1"
+    "mid2"
+    "left2"
+    "right2"
+    "garden";
 }
 .map-grid .area-garden { grid-area: garden; }
 .map-grid .area-left1 { grid-area: left1; }
@@ -65,25 +70,35 @@ html, body {
 .map-grid .area-left2 { grid-area: left2; }
 .map-grid .area-mid2 { grid-area: mid2; }
 .map-grid .area-right2 { grid-area: right2; }
+.map-strip {
+  min-width: 0;
+}
+.map-strip-label {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #475569;
+  margin: 0 0 0.25rem;
+  letter-spacing: 0.04em;
+}
 .map-plots {
   display: flex;
-  flex-wrap: nowrap;
-  gap: 0.15rem;
+  flex-wrap: wrap;
+  gap: 0.3rem;
   min-width: 0;
   width: 100%;
 }
 .map-plot {
-  flex: 1 1 0;
-  min-width: 0;
+  flex: 0 0 calc((100% - 1.5rem) / 6);
+  width: calc((100% - 1.5rem) / 6);
   aspect-ratio: 1 / 1;
-  max-height: 2.6rem;
-  border-radius: 0.4rem;
+  border-radius: 0.45rem;
   border: 1.5px solid;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: clamp(0.55rem, 2.4vw, 0.78rem);
+  font-size: 0.78rem;
   color: #0f2744;
   cursor: pointer;
   line-height: 1;
@@ -91,8 +106,9 @@ html, body {
   transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 .map-plot.compact {
-  max-height: 1.7rem;
-  font-size: clamp(0.45rem, 1.8vw, 0.62rem);
+  flex-basis: calc((100% - 1.2rem) / 8);
+  width: calc((100% - 1.2rem) / 8);
+  font-size: 0.55rem;
   border-radius: 0.3rem;
   border-width: 1px;
 }
@@ -117,27 +133,26 @@ html, body {
   z-index: 2;
 }
 .map-spot {
-  min-height: 100%;
-  border-radius: 0.55rem;
+  border-radius: 0.7rem;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 0.1rem;
-  padding: 0.25rem 0.15rem;
+  gap: 0.4rem;
+  padding: 0.65rem 0.75rem;
   text-align: center;
   font-weight: 800;
-  font-size: clamp(0.42rem, 1.6vw, 0.58rem);
-  letter-spacing: 0.04em;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
   line-height: 1.1;
+  min-height: 2.75rem;
 }
 .map-emoji {
-  font-size: clamp(0.85rem, 3vw, 1.15rem);
+  font-size: 1.15rem;
   line-height: 1;
 }
 .map-spot-label {
   max-width: 100%;
-  word-break: break-word;
 }
 .map-spot.gate {
   background: #fff1e8;
@@ -155,21 +170,57 @@ html, body {
   border: 1.5px solid #4ade80;
 }
 .map-stage.compact .map-spot {
-  font-size: 0.4rem;
-  padding: 0.15rem 0.1rem;
+  font-size: 0.55rem;
+  min-height: 1.8rem;
+  padding: 0.35rem 0.4rem;
+  gap: 0.25rem;
 }
 .map-stage.compact .map-emoji {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
 }
-@media (min-width: 640px) {
+.map-stage.compact .map-strip-label {
+  font-size: 0.55rem;
+  margin-bottom: 0.15rem;
+}
+
+/* Desktop: horizontal society plan */
+@media (min-width: 768px) {
   .map-stage {
     padding: 0.85rem;
   }
   .map-grid {
     gap: 0.4rem;
-    grid-template-columns: minmax(4.2rem, 0.55fr) minmax(0, 1.65fr) minmax(4.2rem, 0.55fr) minmax(0, 1fr);
+    grid-template-columns: minmax(4.5rem, 0.55fr) minmax(0, 1.65fr) minmax(4.5rem, 0.55fr) minmax(0, 1fr);
+    grid-template-areas:
+      "garden left1 mid1 right1"
+      "garden left2 mid2 right2";
+    align-items: stretch;
+  }
+  .map-strip-label {
+    display: none;
+  }
+  .map-plots {
+    flex-wrap: nowrap;
+    gap: 0.2rem;
   }
   .map-plot {
+    flex: 1 1 0;
+    width: auto;
     max-height: 3rem;
+    font-size: 0.75rem;
+  }
+  .map-plot.compact {
+    max-height: 1.7rem;
+    font-size: 0.55rem;
+  }
+  .map-spot {
+    flex-direction: column;
+    min-height: 100%;
+    padding: 0.35rem 0.2rem;
+    font-size: 0.58rem;
+    gap: 0.15rem;
+  }
+  .map-emoji {
+    font-size: 1.05rem;
   }
 }

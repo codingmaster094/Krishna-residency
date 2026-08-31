@@ -52,6 +52,7 @@ function PlotStrip({
   filter,
   onClick,
   compact,
+  label,
 }: {
   nums: readonly number[];
   byNum: Map<number, LayoutPlot>;
@@ -59,29 +60,33 @@ function PlotStrip({
   filter: PayStatus | "all";
   onClick?: (p: LayoutPlot) => void;
   compact?: boolean;
+  label?: string;
 }) {
   return (
-    <div className="map-plots">
-      {nums.map((n) => {
-        const p = byNum.get(n);
-        if (!p) {
+    <div className="map-strip">
+      {label && <p className="map-strip-label">{label}</p>}
+      <div className="map-plots">
+        {nums.map((n) => {
+          const p = byNum.get(n);
+          if (!p) {
+            return (
+              <span key={n} className={`map-plot ghost ${compact ? "compact" : ""}`}>
+                {n}
+              </span>
+            );
+          }
           return (
-            <span key={n} className={`map-plot ghost ${compact ? "compact" : ""}`}>
-              {n}
-            </span>
+            <PlotCell
+              key={n}
+              plot={p}
+              highlight={highlight === n}
+              dim={filter !== "all" && p.payStatus !== filter}
+              onClick={onClick}
+              compact={compact}
+            />
           );
-        }
-        return (
-          <PlotCell
-            key={n}
-            plot={p}
-            highlight={highlight === n}
-            dim={filter !== "all" && p.payStatus !== filter}
-            onClick={onClick}
-            compact={compact}
-          />
-        );
-      })}
+        })}
+      </div>
     </div>
   );
 }
@@ -103,31 +108,62 @@ export function SocietyMap({
   return (
     <div className={`map-stage ${compact ? "compact" : ""}`}>
       <div className="map-grid">
-        <div className="map-spot garden area-garden" title="Children garden">
-          <span className="map-emoji">🛝</span>
-          <span className="map-spot-label">{compact ? "GARDEN" : SOCIETY_LAYOUT.gardenLabel}</span>
-        </div>
-
-        <div className="area-left1">
-          <PlotStrip nums={row1.left} byNum={byNum} highlight={highlight} filter={filter} onClick={onClick} compact={compact} />
-        </div>
+        {/* DOM order = mobile vertical top→bottom; desktop uses grid-areas */}
         <div className="map-spot gate area-mid1" title="Gate between 9 and 8">
           <span className="map-emoji">🚪</span>
           <span className="map-spot-label">{SOCIETY_LAYOUT.gateLabel}</span>
         </div>
-        <div className="area-right1">
-          <PlotStrip nums={row1.right} byNum={byNum} highlight={highlight} filter={filter} onClick={onClick} compact={compact} />
+        <div className="area-left1">
+          <PlotStrip
+            nums={row1.left}
+            byNum={byNum}
+            highlight={highlight}
+            filter={filter}
+            onClick={onClick}
+            compact={compact}
+            label="23 → 9"
+          />
         </div>
-
-        <div className="area-left2">
-          <PlotStrip nums={row2.left} byNum={byNum} highlight={highlight} filter={filter} onClick={onClick} compact={compact} />
+        <div className="area-right1">
+          <PlotStrip
+            nums={row1.right}
+            byNum={byNum}
+            highlight={highlight}
+            filter={filter}
+            onClick={onClick}
+            compact={compact}
+            label="8 → 1"
+          />
         </div>
         <div className="map-spot parking area-mid2" title="Parking opposite gate">
           <span className="map-emoji">🅿️</span>
           <span className="map-spot-label">{SOCIETY_LAYOUT.parkingLabel}</span>
         </div>
+        <div className="area-left2">
+          <PlotStrip
+            nums={row2.left}
+            byNum={byNum}
+            highlight={highlight}
+            filter={filter}
+            onClick={onClick}
+            compact={compact}
+            label="24 → 36"
+          />
+        </div>
         <div className="area-right2">
-          <PlotStrip nums={row2.right} byNum={byNum} highlight={highlight} filter={filter} onClick={onClick} compact={compact} />
+          <PlotStrip
+            nums={row2.right}
+            byNum={byNum}
+            highlight={highlight}
+            filter={filter}
+            onClick={onClick}
+            compact={compact}
+            label="37 → 44"
+          />
+        </div>
+        <div className="map-spot garden area-garden" title="Children garden">
+          <span className="map-emoji">🛝</span>
+          <span className="map-spot-label">{compact ? "GARDEN" : SOCIETY_LAYOUT.gardenLabel}</span>
         </div>
       </div>
     </div>
