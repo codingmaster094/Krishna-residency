@@ -100,7 +100,10 @@ export function InstallAppButton({ variant = "header" }: { variant?: "header" | 
 export function PwaRegister() {
   useEffect(() => {
     if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
-    navigator.serviceWorker.register("/sw.js").catch(() => undefined);
+    navigator.serviceWorker
+      .register("/sw.js", { updateViaCache: "none" })
+      .then((reg) => reg.update().catch(() => undefined))
+      .catch(() => undefined);
   }, []);
   return null;
 }

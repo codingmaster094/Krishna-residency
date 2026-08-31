@@ -2,16 +2,20 @@
 
 import { FormEvent, Suspense, useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { APP_NAME, SOCIETY_NAME } from "@/lib/constants";
 import { inputCls } from "@/components/ui";
 import { InstallAppButton } from "@/components/PwaInstall";
-import { useAuth } from "@/components/AuthProvider";
+import { useAuth, type SessionAdmin } from "@/components/AuthProvider";
+
+function safeNextPath(raw: string | null) {
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//") || raw.startsWith("/login")) return "/";
+  return raw;
+}
 
 function AuthForm() {
-  const router = useRouter();
-  const { refresh } = useAuth();
-  const next = useSearchParams().get("next") || "/";
+  const { setAdmin } = useAuth();
+  const next = safeNextPath(useSearchParams().get("next"));
   const [mode, setMode] = useState<"login" | "create">("login");
   const [identifier, setIdentifier] = useState("");
   const [name, setName] = useState("");
@@ -27,19 +31,35 @@ function AuthForm() {
     setBusy(true);
     setErr("");
     setOk("");
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ identifier, password }),
-    });
-    const data = await res.json().catch(() => ({ error: "સર્વર જવાબ નથી" }));
-    setBusy(false);
-    if (!res.ok) {
-      setErr(data.error || "Failed");
-      return;
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        credentials: "include",
+        cache: "no-store",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ identifier, password }),
+      });
+      const data = await res.json().catch(() => ({ error: "સર્વર જવાબ નથી" }));
+      if (!res.ok) {
+        setErr(data.error || "Failed");
+        setBusy(false);
+        return;
+      }
+      if (data.admin) {
+        setAdmin({
+          id: String(data.admin.id),
+          name: data.admin.name,
+          email: data.admin.email,
+          mobile: data.admin.mobile,
+          role: "admin",
+        } satisfies SessionAdmin);
+      }
+      // Full reload so mobile/PWA always picks up the auth cookie.
+      window.location.assign(next);
+    } catch {
+      setErr("નેટવર્ક ભૂલ — ફરી પ્રયાસ કરો");
+      setBusy(false);
     }
-    await refresh();
-    router.replace(next);
   }
 
   async function onCreate(e: FormEvent) {
@@ -49,6 +69,8 @@ function AuthForm() {
     setOk("");
     const res = await fetch("/api/auth/register", {
       method: "POST",
+      credentials: "include",
+      cache: "no-store",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, email, mobile, password }),
     });

@@ -1,18 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { InstallAppButton } from "@/components/PwaInstall";
 import { useAuth } from "@/components/AuthProvider";
 
 export function Header({ title }: { title: string }) {
-  const router = useRouter();
   const { admin, refresh } = useAuth();
 
   async function logout() {
-    await fetch("/api/auth/logout", { method: "POST" });
+    await fetch("/api/auth/logout", { method: "POST", credentials: "include", cache: "no-store" });
     await refresh();
-    router.replace("/");
+    window.location.assign("/");
   }
 
   return (

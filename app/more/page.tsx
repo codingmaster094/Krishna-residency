@@ -7,7 +7,7 @@ import { InstallAppButton } from "@/components/PwaInstall";
 import { useAuth } from "@/components/AuthProvider";
 
 const cards = [
-  { href: "/map", title: "લેઆઉટ", sub: "3D સોસાયટી મેપ 1–44", icon: "🗺️", tone: "from-emerald-50 to-white" },
+  { href: "/map", title: "લેઆઉટ", sub: "સોસાયટી મેપ · Plot 1–44", icon: "🗺️", tone: "from-emerald-50 to-white" },
   { href: "/vehicles", title: "વાહન", sub: "કાર · રિક્ષા · બાઈક", icon: "🚘", tone: "from-sky-50 to-white" },
   { href: "/notices", title: "નોટિસ", sub: "જાહેરાત બોર્ડ", icon: "✦", tone: "from-amber-50 to-white" },
   { href: "/emergency", title: "ઇમરજન્સી નંબર", sub: "પોલીસ, ફાયર, હોસ્પિટલ", icon: "☎", tone: "from-red-50 to-white" },

@@ -36,160 +36,140 @@ html, body {
   overflow-x: hidden;
 }
 
-.iso-fit {
+/* Flat 2D society map — mobile-first, no 3D */
+.map-stage {
   width: 100%;
-  position: relative;
+  background: #eef7e4;
+  border-radius: 1.25rem;
+  border: 1px solid #d9e8c8;
+  padding: 0.55rem;
   overflow: hidden;
 }
-.iso-fit .iso-stage {
-  position: absolute;
-  top: 0;
-  left: 0;
+.map-stage.compact {
+  padding: 0.4rem;
 }
-.iso-stage {
-  background:
-    radial-gradient(ellipse at 50% 0%, #fff7ed 0%, transparent 42%),
-    repeating-linear-gradient(90deg, #c5e1a5 0 18px, #d4edb0 18px 36px);
-  border-radius: 1.5rem;
-  border: 1px solid #e8dcc8;
-  box-shadow: inset 0 0 0 6px #e8f5d0, 0 16px 40px rgba(15, 39, 68, 0.08);
-  padding: 0.85rem 0.7rem 1rem;
-  width: 980px;
-  box-sizing: border-box;
-}
-.iso-map {
+.map-grid {
   display: grid;
-  grid-template-columns: 5.4rem minmax(0, 1.7fr) 5.2rem minmax(0, 1fr);
+  grid-template-columns: minmax(2.6rem, 0.55fr) minmax(0, 1.65fr) minmax(2.6rem, 0.55fr) minmax(0, 1fr);
   grid-template-areas:
     "garden left1 mid1 right1"
     "garden left2 mid2 right2";
-  gap: 0.5rem 0.4rem;
+  gap: 0.3rem;
   width: 100%;
   align-items: stretch;
 }
-.iso-map .area-garden { grid-area: garden; }
-.iso-map .area-left1 { grid-area: left1; }
-.iso-map .area-mid1 { grid-area: mid1; }
-.iso-map .area-right1 { grid-area: right1; }
-.iso-map .area-left2 { grid-area: left2; }
-.iso-map .area-mid2 { grid-area: mid2; }
-.iso-map .area-right2 { grid-area: right2; }
-.iso-plots {
+.map-grid .area-garden { grid-area: garden; }
+.map-grid .area-left1 { grid-area: left1; }
+.map-grid .area-mid1 { grid-area: mid1; }
+.map-grid .area-right1 { grid-area: right1; }
+.map-grid .area-left2 { grid-area: left2; }
+.map-grid .area-mid2 { grid-area: mid2; }
+.map-grid .area-right2 { grid-area: right2; }
+.map-plots {
   display: flex;
   flex-wrap: nowrap;
-  gap: 0.2rem;
+  gap: 0.15rem;
   min-width: 0;
   width: 100%;
-  align-items: stretch;
 }
-.iso-plot {
+.map-plot {
   flex: 1 1 0;
-  min-width: 2.05rem;
-  width: auto;
-  min-height: 3.25rem;
-  padding: 0.85rem 0.05rem 0.2rem;
-  border-radius: 0.35rem 0.35rem 0.45rem 0.45rem;
-  transform: perspective(260px) rotateX(22deg);
-  box-shadow: 3px 5px 0 rgba(15, 39, 68, 0.16);
-  border: 2px solid;
+  min-width: 0;
+  aspect-ratio: 1 / 1;
+  max-height: 2.6rem;
+  border-radius: 0.4rem;
+  border: 1.5px solid;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
-  gap: 0.04rem;
+  justify-content: center;
   font-weight: 800;
-  font-size: 0.72rem;
-  letter-spacing: -0.03em;
+  font-size: clamp(0.55rem, 2.4vw, 0.78rem);
   color: #0f2744;
   cursor: pointer;
-  position: relative;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  line-height: 1;
+  padding: 0;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
-.iso-plot::before {
-  content: "";
-  position: absolute;
-  top: 0.12rem;
-  left: 12%;
-  right: 12%;
-  height: 0.45rem;
-  background: currentColor;
-  clip-path: polygon(50% 0, 100% 100%, 0 100%);
-  opacity: 0.5;
-  pointer-events: none;
+.map-plot.compact {
+  max-height: 1.7rem;
+  font-size: clamp(0.45rem, 1.8vw, 0.62rem);
+  border-radius: 0.3rem;
+  border-width: 1px;
 }
-.iso-plot .iso-home {
-  width: clamp(0.55rem, 1.4vw, 0.95rem);
-  height: clamp(0.55rem, 1.4vw, 0.95rem);
-  opacity: 0.85;
+.map-plot.ghost {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #94a3b8;
+  cursor: default;
 }
-.iso-plot:hover,
-.iso-plot:focus-visible {
-  transform: perspective(260px) rotateX(22deg) translateY(-4px) scale(1.04);
-  outline: none;
-  z-index: 3;
+.map-plot.dim {
+  opacity: 0.28;
 }
-.iso-plot.hl {
-  box-shadow: 0 0 0 3px #c9a227, 3px 5px 0 rgba(15, 39, 68, 0.16);
+.map-plot.hl {
+  box-shadow: 0 0 0 2px #c9a227;
+  transform: scale(1.06);
   z-index: 2;
 }
-.iso-landmark .iso-home {
-  width: 1.15rem;
-  height: 1.15rem;
+.map-plot:hover,
+.map-plot:focus-visible {
+  outline: none;
+  transform: scale(1.05);
+  z-index: 2;
 }
-.iso-landmark {
+.map-spot {
   min-height: 100%;
+  border-radius: 0.55rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.2rem;
-  font-weight: 800;
-  font-size: 0.58rem;
-  letter-spacing: 0.05em;
+  gap: 0.1rem;
+  padding: 0.25rem 0.15rem;
   text-align: center;
-  border-radius: 0.7rem;
-  padding: 0.4rem 0.25rem 0.45rem;
-  line-height: 1.15;
-  overflow: hidden;
-  hyphens: auto;
+  font-weight: 800;
+  font-size: clamp(0.42rem, 1.6vw, 0.58rem);
+  letter-spacing: 0.04em;
+  line-height: 1.1;
 }
-.iso-landmark svg.scene {
-  width: 100%;
-  height: auto;
-  max-height: 5.5rem;
-  display: block;
+.map-emoji {
+  font-size: clamp(0.85rem, 3vw, 1.15rem);
+  line-height: 1;
 }
-.iso-garden svg.scene {
-  max-height: 7.5rem;
+.map-spot-label {
+  max-width: 100%;
+  word-break: break-word;
 }
-.iso-gate {
-  color: #7f1d1d;
-  background: linear-gradient(180deg, #fff7ed, #fed7aa);
-  box-shadow: 0 7px 0 #9a3412, 0 12px 16px rgba(15, 39, 68, 0.16);
-  border: 2px solid #fb923c;
+.map-spot.gate {
+  background: #fff1e8;
+  color: #9a3412;
+  border: 1.5px solid #fb923c;
 }
-.iso-parking {
-  color: #1e3a8a;
-  background: linear-gradient(180deg, #64748b, #1e293b);
-  box-shadow: 0 7px 0 #0f172a, 0 12px 16px rgba(15, 39, 68, 0.2);
-  border: 2px solid #facc15;
-}
-.iso-parking span {
+.map-spot.parking {
+  background: #1e293b;
   color: #facc15;
+  border: 1.5px solid #facc15;
 }
-.iso-garden {
-  color: #14532d;
-  background:
-    radial-gradient(circle at 20% 80%, #86efac 0 8px, transparent 9px),
-    radial-gradient(circle at 70% 70%, #f9a8d4 0 6px, transparent 7px),
-    radial-gradient(circle at 50% 90%, #fde047 0 5px, transparent 6px),
-    linear-gradient(180deg, #86efac, #16a34a 55%, #166534);
-  box-shadow: 0 7px 0 #14532d, 0 12px 16px rgba(15, 39, 68, 0.16);
-  border: 2px solid #bbf7d0;
+.map-spot.garden {
+  background: #dcfce7;
+  color: #166534;
+  border: 1.5px solid #4ade80;
 }
-@media (max-width: 640px) {
-  .iso-plot .iso-home {
-    width: 0.7rem;
-    height: 0.7rem;
+.map-stage.compact .map-spot {
+  font-size: 0.4rem;
+  padding: 0.15rem 0.1rem;
+}
+.map-stage.compact .map-emoji {
+  font-size: 0.75rem;
+}
+@media (min-width: 640px) {
+  .map-stage {
+    padding: 0.85rem;
+  }
+  .map-grid {
+    gap: 0.4rem;
+    grid-template-columns: minmax(4.2rem, 0.55fr) minmax(0, 1.65fr) minmax(4.2rem, 0.55fr) minmax(0, 1fr);
+  }
+  .map-plot {
+    max-height: 3rem;
   }
 }

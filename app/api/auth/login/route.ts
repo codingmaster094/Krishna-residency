@@ -36,7 +36,8 @@ export async function POST(req: Request) {
     const res = NextResponse.json({
       admin: { id: admin._id, name: admin.name, email: admin.email, mobile: admin.mobile },
     });
-    setAuthCookie(res, token);
+    setAuthCookie(res, token, req);
+    res.headers.set("Cache-Control", "no-store");
     return res;
   } catch (err) {
     console.error("login", err);

@@ -43,16 +43,29 @@ export async function requireAdmin() {
   return { admin, error: null as NextResponse | null };
 }
 
-export function setAuthCookie(res: NextResponse, token: string) {
+function cookieSecure(req?: Request) {
+  if (process.env.NODE_ENV !== "production") return false;
+  const proto = req?.headers.get("x-forwarded-proto") || "";
+  if (proto) return proto.split(",")[0].trim() === "https";
+  return true;
+}
+
+export function setAuthCookie(res: NextResponse, token: string, req?: Request) {
   res.cookies.set(AUTH_COOKIE, token, {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: cookieSecure(req),
     path: "/",
     maxAge: 60 * 60 * 24 * 7,
   });
 }
 
-export function clearAuthCookie(res: NextResponse) {
-  res.cookies.set(AUTH_COOKIE, "", { httpOnly: true, path: "/", maxAge: 0 });
+export function clearAuthCookie(res: NextResponse, req?: Request) {
+  res.cookies.set(AUTH_COOKIE, "", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: cookieSecure(req),
+    path: "/",
+    maxAge: 0,
+  });
 }

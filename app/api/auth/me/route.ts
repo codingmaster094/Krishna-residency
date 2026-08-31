@@ -5,7 +5,8 @@ import { Admin } from "@/models/Admin";
 
 export async function GET() {
   const session = await getAdminFromCookies();
-  if (!session) return NextResponse.json({ admin: null });
+  const headers = { "Cache-Control": "no-store" };
+  if (!session) return NextResponse.json({ admin: null }, { headers });
   await dbConnect();
   const admin = (await Admin.findById(session.sub).lean()) as {
     _id: unknown;
@@ -14,8 +15,11 @@ export async function GET() {
     mobile: string;
     role: string;
   } | null;
-  if (!admin) return NextResponse.json({ admin: null });
-  return NextResponse.json({
-    admin: { id: admin._id, name: admin.name, email: admin.email, mobile: admin.mobile, role: admin.role },
-  });
+  if (!admin) return NextResponse.json({ admin: null }, { headers });
+  return NextResponse.json(
+    {
+      admin: { id: admin._id, name: admin.name, email: admin.email, mobile: admin.mobile, role: admin.role },
+    },
+    { headers }
+  );
 }

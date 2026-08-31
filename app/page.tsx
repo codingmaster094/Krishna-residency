@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { inputCls, Screen } from "@/components/ui";
+import { SocietyMap, type LayoutPlot } from "@/components/SocietyMap";
 import { api } from "@/lib/api";
 import { formatInr } from "@/lib/format";
 import { APP_NAME } from "@/lib/constants";
@@ -29,10 +30,20 @@ export default function Dashboard() {
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [data, setData] = useState<Dash | null>(null);
+  const [plots, setPlots] = useState<LayoutPlot[]>([]);
 
   useEffect(() => {
     api.get<Dash>(`/api/dashboard?year=${year}&month=${month}`).then(setData).catch(console.error);
   }, [year, month]);
+
+  useEffect(() => {
+    api
+      .get<{ plots: LayoutPlot[] }>(`/api/layout?year=${year}&month=${month}`)
+      .then((d) => setPlots(d.plots))
+      .catch(console.error);
+  }, [year, month]);
+
+  const byNum = useMemo(() => new Map(plots.map((p) => [p.number, p])), [plots]);
 
   if (!data) return <p className="p-8 text-center text-slate-500 font-guj">લોડ થઈ રહ્યું છે...</p>;
   const f = data.fund;
@@ -102,7 +113,7 @@ export default function Dashboard() {
           <p className="mt-2 text-xs text-slate-500">આ મહિનાનો ખર્ચ (કલેક્શનમાંથી): {formatInr(data.monthExpenseTotal)}</p>
         </section>
 
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           <Link href="/plots" className="card-surface p-3 text-center">
             <p className="text-xl font-bold">{data.galas}</p>
             <p className="text-[11px] font-guj">પ્લોટ</p>
@@ -112,11 +123,20 @@ export default function Dashboard() {
             <p className="text-xs">બાઈક {f.vehicles.bike}</p>
             <p className="text-xs">રિક્ષા {f.vehicles.rickshaw}</p>
           </div>
-          <Link href="/map" className="card-surface p-3 text-center">
-            <p className="font-guj text-sm font-bold">લેઆઉટ</p>
-            <p className="text-[10px] text-slate-500">GATE · 1–44</p>
-          </Link>
         </div>
+
+        <section className="card-surface p-3">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="font-guj font-bold">સોસાયટી લેઆઉટ</h2>
+            <Link href="/map" className="text-xs font-semibold text-navy bg-cream px-2.5 py-1 rounded-full">
+              પૂરું જુઓ →
+            </Link>
+          </div>
+          <p className="text-[10px] text-slate-500 mb-2">Gate · Parking · Garden · Plot 1–44</p>
+          <Link href="/map" className="block">
+            <SocietyMap byNum={byNum} compact />
+          </Link>
+        </section>
 
         <Link href="/expenses" className="card-surface p-4 block">
           <h3 className="font-guj font-bold mb-2">તાજા ખર્ચ</h3>
