@@ -24,7 +24,6 @@ export async function GET(req: Request) {
   const vehicles = await Vehicle.find(filter).populate("flatId").sort({ createdAt: -1 }).lean();
   return NextResponse.json({ vehicles });
 }
-
 export async function POST(req: Request) {
   const { error } = await requireAdmin();
   if (error) return error;
